@@ -1,0 +1,196 @@
+{
+  "$schema": "./capabilities.schema.md",
+  "meta": {
+    "platform": "MATRIYA",
+    "purpose": "Single Source of Truth for the maturity, wiring and health of every platform capability. This file is data, not prose — the Control Tower (and any dashboard, CI gate or status report) reads it. Humans read the generated CAPABILITIES.md.",
+    "owner": "shoshan19@gmail.com",
+    "asOf": "2026-06-29",
+    "controlPlaneRepo": "matriya-system",
+    "regenerateView": "npm run render  (writes CAPABILITIES.md from this file)",
+    "legend": {
+      "status": {
+        "ready": "✅ live and wired end-to-end (backend + frontend + API + DB)",
+        "partial": "🟡 exists but a layer or connection is missing / not wired in production",
+        "poc": "🟢 prototype / proof-of-concept — not productized",
+        "design": "🔵 designed on paper only — no implementation located",
+        "unknown": "⚪ asserted to exist but the codebase scan could not locate it"
+      },
+      "layer": {
+        "yes": "✅ present",
+        "partial": "🟡 partial",
+        "no": "—",
+        "na": "n/a"
+      }
+    }
+  },
+
+  "repositories": [
+    {
+      "name": "matriya-back",
+      "role": "Research / RAG / Knowledge backend (mature, production)",
+      "stack": "Node + Express + Supabase/pgvector + local embeddings (xenova)",
+      "maturity": "production",
+      "deploy": "Vercel",
+      "primaryCapabilities": ["authentication", "document-intake", "rag", "knowledge-engine", "report-engine"]
+    },
+    {
+      "name": "matriya-front",
+      "role": "Research UI (Ask Matriya, upload, research, admin)",
+      "stack": "React (CRA) + axios",
+      "maturity": "functional",
+      "deploy": "Vercel",
+      "primaryCapabilities": ["authentication", "document-intake", "rag", "report-engine"]
+    },
+    {
+      "name": "maneger-back",
+      "role": "Lab & Project management backend (mature)",
+      "stack": "Node + Express + Supabase + OpenAI + MS Graph + Resend",
+      "maturity": "production",
+      "deploy": "Vercel",
+      "primaryCapabilities": ["authentication", "project-management", "laboratory", "document-intake", "rag", "report-engine"]
+    },
+    {
+      "name": "maneger-front",
+      "role": "Lab & Project management UI (Hebrew RTL)",
+      "stack": "React + Vite + axios",
+      "maturity": "functional",
+      "deploy": "Vercel",
+      "primaryCapabilities": ["project-management", "laboratory", "document-intake", "rag"]
+    },
+    {
+      "name": "matriya-system",
+      "role": "Platform Control Plane — home of this registry and the future Control Tower. (Was an abandoned RAG skeleton; the empty src/ tree is dormant and slated for removal once the Control Tower lands.)",
+      "stack": "Node — registry + render tooling",
+      "maturity": "control-plane",
+      "deploy": "n/a",
+      "primaryCapabilities": []
+    }
+  ],
+
+  "connections": [
+    { "id": "jwt",      "name": "JWT auth",            "status": "ready",   "issuer": "matriya-back", "usedBy": ["matriya-back", "matriya-front", "maneger-back", "maneger-front"], "notes": "maneger-back proxies auth to matriya-back; same token bridges the two products." },
+    { "id": "supabase", "name": "Supabase (Postgres)", "status": "ready",   "instances": ["matriya DB (rag_documents, users, sessions, audit)", "maneger DB (projects, lab, management_vector)"], "usedBy": ["matriya-back", "maneger-back"], "notes": "Two separate instances by design — no shared DB; products integrate via API only." },
+    { "id": "openai",   "name": "OpenAI",              "status": "ready",   "usedBy": ["matriya-back", "maneger-back"], "notes": "file_search + embeddings (maneger: text-embedding-ada-002). matriya-back also supports Together AI / HuggingFace." },
+    { "id": "msgraph",  "name": "Microsoft Graph (SharePoint)", "status": "partial", "usedBy": ["maneger-back"], "notes": "Code wired; needs Azure app registration (SHAREPOINT_*). Returns 400 if unconfigured." },
+    { "id": "resend",   "name": "Email (Resend)",      "status": "partial", "usedBy": ["maneger-back"], "notes": "Inbound+outbound mail. NOTE: the product brief calls this 'Gmail' — actual implementation is Resend. Reconcile naming." }
+  ],
+
+  "capabilities": [
+    {
+      "id": "authentication",
+      "name": "Authentication",
+      "hebrew": "זיהוי והרשאות",
+      "status": "ready",
+      "summary": "JWT login/signup, single identity across both products.",
+      "layers": { "backend": "yes", "frontend": "yes", "api": "yes", "db": "yes" },
+      "repos": ["matriya-back", "maneger-back", "matriya-front", "maneger-front"],
+      "dependencies": ["jwt"],
+      "openItems": []
+    },
+    {
+      "id": "project-management",
+      "name": "Project Management",
+      "hebrew": "ניהול פרויקטים",
+      "status": "ready",
+      "summary": "Projects, tasks (FSM), milestones, notes, members, chat, audit log, RBAC.",
+      "layers": { "backend": "yes", "frontend": "yes", "api": "yes", "db": "yes" },
+      "repos": ["maneger-back", "maneger-front"],
+      "dependencies": ["authentication", "supabase"],
+      "openItems": []
+    },
+    {
+      "id": "laboratory",
+      "name": "Laboratory",
+      "hebrew": "מעבדה",
+      "status": "ready",
+      "summary": "Experiments, runs, materials library, formulation parsing/comparison, lab AI insights.",
+      "layers": { "backend": "yes", "frontend": "yes", "api": "yes", "db": "yes" },
+      "repos": ["maneger-back", "maneger-front"],
+      "dependencies": ["authentication", "supabase", "openai"],
+      "openItems": ["Suggestion Engine is a UI placeholder with no backend logic."]
+    },
+    {
+      "id": "document-intake",
+      "name": "Document Intake",
+      "hebrew": "קליטת מסמכים",
+      "status": "ready",
+      "summary": "Upload + parse (PDF/DOCX/XLSX/CSV), chunking, storage (Supabase buckets), SharePoint pull.",
+      "layers": { "backend": "yes", "frontend": "yes", "api": "yes", "db": "yes" },
+      "repos": ["matriya-back", "maneger-back", "matriya-front", "maneger-front"],
+      "dependencies": ["supabase", "msgraph"],
+      "openItems": ["Frontends rely on default/fallback API URLs — env vars not pinned in Vercel."]
+    },
+    {
+      "id": "rag",
+      "name": "RAG",
+      "hebrew": "אחזור מבוסס מסמכים",
+      "status": "ready",
+      "summary": "Vector retrieval + grounded answers. matriya: local pgvector. maneger: management_vector + OpenAI file_search.",
+      "layers": { "backend": "yes", "frontend": "yes", "api": "yes", "db": "yes" },
+      "repos": ["matriya-back", "maneger-back", "matriya-front", "maneger-front"],
+      "dependencies": ["document-intake", "openai", "supabase"],
+      "openItems": []
+    },
+    {
+      "id": "knowledge-engine",
+      "name": "Knowledge Engine",
+      "hebrew": "מנוע ידע",
+      "status": "partial",
+      "summary": "Kernel v1.6 breakdown detection, integrity monitor + rules engine, decision/research audit logs, evidence attribution.",
+      "layers": { "backend": "yes", "frontend": "partial", "api": "yes", "db": "yes" },
+      "repos": ["matriya-back", "matriya-front"],
+      "dependencies": ["rag"],
+      "openItems": ["No first-class 'Knowledge Event' entity yet — knowledge state is implied by audit/decision logs.", "Admin/observability endpoints exist but UI coverage is partial."]
+    },
+    {
+      "id": "knowledge-events",
+      "name": "Knowledge Events",
+      "hebrew": "אירועי ידע",
+      "status": "design",
+      "summary": "First-class record of every knowledge change (new evidence, contradiction, intent, open question). Today these are scattered across audit logs.",
+      "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
+      "repos": [],
+      "dependencies": ["knowledge-engine"],
+      "openItems": ["Define the event schema and emit points; this is the substrate the Control Tower's 'Knowledge Growth' panel needs."]
+    },
+    {
+      "id": "evolution-engine",
+      "name": "Evolution Engine",
+      "hebrew": "מנוע התפתחות",
+      "status": "unknown",
+      "summary": "Asserted to exist as a prototype, but the codebase scan did not locate an implementation.",
+      "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
+      "repos": [],
+      "dependencies": ["knowledge-engine"],
+      "openItems": ["ACTION: link the prototype source, or downgrade to 'design'. This is exactly the kind of ambiguity the registry exists to surface."]
+    },
+    {
+      "id": "decision-engine",
+      "name": "Decision Engine",
+      "hebrew": "מנוע החלטות",
+      "status": "design",
+      "summary": "Turn knowledge + evidence into recommended engineering decisions. Design stage only.",
+      "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
+      "repos": [],
+      "dependencies": ["knowledge-engine", "knowledge-events"],
+      "openItems": ["No implementation located — design only."]
+    },
+    {
+      "id": "report-engine",
+      "name": "Report Engine",
+      "hebrew": "מנוע דוחות",
+      "status": "partial",
+      "summary": "matriya-back value-summary endpoints + maneger TXT project export. Not unified into one reporting capability.",
+      "layers": { "backend": "partial", "frontend": "partial", "api": "partial", "db": "na" },
+      "repos": ["matriya-back", "maneger-back"],
+      "dependencies": ["knowledge-engine", "project-management"],
+      "openItems": ["Two ad-hoc exporters; no shared report model or unified output."]
+    }
+  ],
+
+  "systemHealth": [
+    { "id": "restore", "name": "DB restore verified", "status": "warning", "notes": "maneger-back RESTORE-TEST-DONE.md is empty — restore drill not yet performed." },
+    { "id": "ci",      "name": "CI / automated tests on push", "status": "missing", "notes": "No GitHub Actions in any repo, despite rich test suites in both backends." },
+    { "id": "env",     "name": "Production env vars pinned", "status": "warning", "notes": "Frontends fall back to hardcoded URLs; cross-product URLs (Management Lab) unset." }
+  ]
+}

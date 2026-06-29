@@ -1,14 +1,15 @@
 {
   "name": "matriya-system",
   "version": "1.0.0",
-  "description": "Matriya RAG system – backend + frontend",
+  "description": "MATRIYA Platform Control Plane — capability registry + control tower",
   "main": "server.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "render": "node scripts/render-capabilities.mjs"
   },
   "repository": {
     "type": "git",
