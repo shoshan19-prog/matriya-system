@@ -188,6 +188,17 @@
     }
   ],
 
+  "knowledgeGrowth": {
+    "note": "These are the platform's growth metrics. They are NOT yet wired to live data sources — the 'Knowledge Events' capability (design stage) is the substrate that will feed them. Until then they read as pending.",
+    "metrics": [
+      { "id": "documents",   "label": "Documents",          "value": null, "source": "matriya-back rag_documents / maneger management_vector", "wired": false },
+      { "id": "evidence",    "label": "Evidence",           "value": null, "source": "matriya-back decision_audit_log attributions",      "wired": false },
+      { "id": "events",      "label": "Knowledge Events",   "value": null, "source": "knowledge-events (design)",                          "wired": false },
+      { "id": "intents",     "label": "Engineering Intents","value": null, "source": "knowledge-events (design)",                          "wired": false },
+      { "id": "questions",   "label": "Open Questions",     "value": null, "source": "knowledge-events (design)",                          "wired": false }
+    ]
+  },
+
   "systemHealth": [
     { "id": "restore", "name": "DB restore verified", "status": "warning", "notes": "maneger-back RESTORE-TEST-DONE.md is empty — restore drill not yet performed." },
     { "id": "ci",      "name": "CI / automated tests on push", "status": "missing", "notes": "No GitHub Actions in any repo, despite rich test suites in both backends." },
