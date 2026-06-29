@@ -7,6 +7,16 @@
     "asOf": "2026-06-29",
     "controlPlaneRepo": "matriya-system",
     "regenerateView": "npm run render  (writes CAPABILITIES.md from this file)",
+    "plan": {
+      "note": "Agreed sequence — the system remembers its own roadmap, not just its state. Methodology: bring the coarse chain live first, observe real flow, only then add finer events.",
+      "steps": [
+        "1. Deploy the Control Plane (matriya-system) to production.",
+        "2. Set KNOWLEDGE_LEDGER_URL in matriya-back and maneger-back.",
+        "3. Let it run 2–3 days; watch real movements flow into the ledger.",
+        "4. THEN wire evidence.attached (intentionally deferred — too fine to debug before the ledger is live in prod).",
+        "5. Promote the JSONL ledger to a DB table for durable production storage."
+      ]
+    },
     "legend": {
       "status": {
         "ready": "✅ live and wired end-to-end (backend + frontend + API + DB)",
