@@ -20,6 +20,11 @@ const lmeta = ledger.meta(events);
 let DATE = process.argv[2];
 if (!DATE) { try { DATE = new Date().toISOString().slice(0, 10); } catch (_) { DATE = 'UNKNOWN'; } }
 
+function yesterdayOf(d) {
+  try { return new Date(new Date(d + 'T00:00:00Z').getTime() - 86400000).toISOString().slice(0, 10); }
+  catch (_) { return null; }
+}
+
 const STATUS_ICON = { ready: '✅', partial: '⚠️', poc: '🟢', design: '🔵', unknown: '⚪' };
 const counts = reg.capabilities.reduce((a, c) => ((a[c.status] = (a[c.status] || 0) + 1), a), {});
 const capById = Object.fromEntries(reg.capabilities.map((c) => [c.id, c]));
@@ -162,6 +167,24 @@ const rootState = root && capById[root.id] ? capById[root.id].status.toUpperCase
 p(`What blocks us? ${root ? root.label + ' is still ' + rootState + ' — the whole pipeline stands on it.' : 'UNKNOWN.'}`);
 p('               The system is seeded, not live.');
 p('What to do today? Deploy the control plane and flip KNOWLEDGE_LEDGER_URL. One act, live system.');
+p('-----------------------------------------');
+p();
+
+// 11. Learning Pulse — the meter. Yesterday's movements, computed from the ledger.
+// Not for the numbers; for the feel. Honest UNKNOWN where the source doesn't exist yet.
+p('## 11. 🧠 Learning Pulse');
+const yday = yesterdayOf(DATE);
+const win = yday ? events.filter((e) => (e.ts || '').slice(0, 10) === yday) : [];
+const fmt = (v) => (v == null ? '⚪ UNKNOWN (ledger seeded — not live)' : (v >= 0 ? '+' : '') + v);
+const keY = lmeta.seeded ? null : win.length;
+const oqY = lmeta.seeded ? null : win.filter((e) => e.category === 'questions').reduce((a, e) => a + (e.delta || 0), 0);
+p(`Yesterday (${yday || 'UNKNOWN'})`);
+p(`  Knowledge Events ......... ${fmt(keY)}`);
+p('  Accepted Evidence ........ ⚪ UNKNOWN (human-review is design-stage)');
+p(`  Open Questions ........... ${fmt(oqY)}`);
+p('  Decisions ................ ⚪ UNKNOWN (decision-engine is design-stage)');
+p('  Average Knowledge Latency  ⚪ UNKNOWN (needs episodic-linking + decisions)');
+p(`Reads ${lmeta.seeded ? 'as seeded — lights up the moment the ledger goes live.' : 'live from the ledger.'}`);
 p();
 p('— End of brief —');
 
