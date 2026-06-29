@@ -17,6 +17,25 @@
         "5. Promote the JSONL ledger to a DB table for durable production storage."
       ]
     },
+    "philosophy": {
+      "lens": "Learning, not Knowledge. Knowledge is a picture; learning is a movie. The Control Room question shifts from 'how much knowledge is there?' to 'how does the lab learn?'",
+      "pipeline": ["Data", "Evidence", "Accepted Evidence", "Knowledge Events", "Knowledge History", "Learning", "Decision", "Law"],
+      "lawIsLast": "The law is the final product, not the starting point. Most AI systems start from the LLM; this one starts from biology: Reality → Events → History → Patterns → Models → Laws.",
+      "ledgerIs": "Episodic memory of the lab — a story ('Tuesday Rachel swapped a material; Thursday a measurement; Sunday a decision; a week later a customer complaint'), not a row ('Formula 27'). Immutable and append-only, so you can always walk back.",
+      "invariant": "Remove the LLM and the skeleton still stands: it keeps collecting, qualifying, recording and building history. The LLM is an accelerator at each stage, never the source of authority. Learning (the mechanism) is separated from inference (the LLM) so each layer can be tested, audited and improved on its own."
+    },
+    "controlRoomModel": {
+      "question": "How does the lab learn?",
+      "note": "The target Control Room metric is a learning funnel, not a count. Today only the top stage has a live source; each lower stage lights up as its capability is built — after real flow exists, per the roadmap.",
+      "funnel": [
+        { "stage": "new events",                 "source": "knowledge-events" },
+        { "stage": "passed qualification",        "source": "evidence-qualification" },
+        { "stage": "accepted",                    "source": "human-review" },
+        { "stage": "changed the knowledge model", "source": "learning-model" },
+        { "stage": "changed a decision",          "source": "decision-engine" },
+        { "stage": "changed a law",               "source": "law (not yet defined)" }
+      ]
+    },
     "legend": {
       "status": {
         "ready": "✅ live and wired end-to-end (backend + frontend + API + DB)",
@@ -158,11 +177,66 @@
       "name": "Knowledge Events",
       "hebrew": "אירועי ידע",
       "status": "poc",
-      "summary": "Append-only ledger of knowledge movements; Knowledge Growth is computed from it (the bank-statement model). Schema + ledger + live feed work in the control plane.",
+      "summary": "Append-only ledger of knowledge movements — the foundational substrate the whole learning pipeline stands on. Knowledge Growth is computed from it (the bank-statement model). Schema + ledger + live feed work in the control plane.",
       "layers": { "backend": "yes", "frontend": "partial", "api": "yes", "db": "partial" },
       "repos": ["matriya-system"],
-      "dependencies": ["knowledge-engine"],
+      "dependencies": [],
       "openItems": ["Emit points WIRED in code: document.ingested/removed (matriya-back + maneger-back), question.opened + intent.declared (maneger-back). Activate by setting KNOWLEDGE_LEDGER_URL in both backends.", "evidence.attached emit point still to wire (matriya-back decision-audit flow).", "Ledger shows seeded sample data until the backends are activated.", "JSONL store is a POC — promote to a DB table for production."]
+    },
+    {
+      "id": "change-detector",
+      "name": "Change Detector",
+      "hebrew": "גלאי שינוי",
+      "status": "design",
+      "summary": "Senses + first nervous system: notice that something in reality differs from before, and filter signal from noise before it reaches the ledger. Today backends emit directly; this layer would qualify 'is this even a change?'.",
+      "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
+      "repos": [],
+      "dependencies": ["knowledge-events"],
+      "openItems": ["Design only — emit points currently bypass any change-detection."]
+    },
+    {
+      "id": "evidence-qualification",
+      "name": "Evidence Qualification",
+      "hebrew": "מיון ראיות",
+      "status": "design",
+      "summary": "Immune system: is a change real, an error, or impossible? Qualify evidence before it is allowed to become accepted knowledge.",
+      "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
+      "repos": [],
+      "dependencies": ["change-detector"],
+      "openItems": ["Design only — no qualification gate exists between an event and the ledger."]
+    },
+    {
+      "id": "human-review",
+      "name": "Human Review",
+      "hebrew": "אישור אנושי",
+      "status": "design",
+      "summary": "Cortex acceptance: a human accepts or rejects qualified evidence before it enters long-term memory and is allowed to change the model.",
+      "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
+      "repos": [],
+      "dependencies": ["evidence-qualification"],
+      "openItems": ["Design only — the 'accepted' funnel stage has no source yet."]
+    },
+    {
+      "id": "episodic-linking",
+      "name": "Episodic Linking",
+      "hebrew": "קישור אפיזודי (היפוקמפוס)",
+      "status": "design",
+      "summary": "The hippocampus: connect events across time into chains/stories so patterns can emerge (material swap → cracks → supplier change → resolved). Asserts a link only after the whole chain exists — not before.",
+      "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
+      "repos": [],
+      "dependencies": ["knowledge-events"],
+      "openItems": ["Design only — the ledger records movements but does not yet link them into episodes.", "This is the organ that turns history into patterns."]
+    },
+    {
+      "id": "learning-model",
+      "name": "Learning Model",
+      "hebrew": "מודל למידה",
+      "status": "design",
+      "summary": "Produces learning, not knowledge — the model that changes as accepted evidence and linked episodes accumulate. 'Knowledge is a picture; learning is a movie.' This is the real subject of the Control Room's 'how does the lab learn?' question.",
+      "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
+      "repos": [],
+      "dependencies": ["human-review", "episodic-linking"],
+      "openItems": ["Design only — replaces 'how much knowledge?' with 'what changed the model, and why?'."]
     },
     {
       "id": "evolution-engine",
@@ -180,10 +254,10 @@
       "name": "Decision Engine",
       "hebrew": "מנוע החלטות",
       "status": "design",
-      "summary": "Turn knowledge + evidence into recommended engineering decisions. Design stage only.",
+      "summary": "Turn learning into recommended engineering decisions (and, ultimately, laws). Design stage only — the last stage of the pipeline, not the first.",
       "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
       "repos": [],
-      "dependencies": ["knowledge-engine", "knowledge-events"],
+      "dependencies": ["learning-model"],
       "openItems": ["No implementation located — design only."]
     },
     {

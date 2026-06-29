@@ -16,6 +16,11 @@ Single Source of Truth for the maturity, wiring and health of every platform cap
 | **RAG** <br/><sub>אחזור מבוסס מסמכים</sub> | ✅ READY | ✅ | ✅ | ✅ | ✅ | matriya-back, maneger-back, matriya-front, maneger-front |
 | **Knowledge Engine** <br/><sub>מנוע ידע</sub> | 🟡 PARTIAL | ✅ | 🟡 | ✅ | ✅ | matriya-back, matriya-front |
 | **Knowledge Events** <br/><sub>אירועי ידע</sub> | 🟢 POC | ✅ | 🟡 | ✅ | 🟡 | matriya-system |
+| **Change Detector** <br/><sub>גלאי שינוי</sub> | 🔵 DESIGN | — | — | — | — | — |
+| **Evidence Qualification** <br/><sub>מיון ראיות</sub> | 🔵 DESIGN | — | — | — | — | — |
+| **Human Review** <br/><sub>אישור אנושי</sub> | 🔵 DESIGN | — | — | — | — | — |
+| **Episodic Linking** <br/><sub>קישור אפיזודי (היפוקמפוס)</sub> | 🔵 DESIGN | — | — | — | — | — |
+| **Learning Model** <br/><sub>מודל למידה</sub> | 🔵 DESIGN | — | — | — | — | — |
 | **Evolution Engine** <br/><sub>מנוע התפתחות</sub> | ⚪ UNKNOWN | — | — | — | — | — |
 | **Decision Engine** <br/><sub>מנוע החלטות</sub> | 🔵 DESIGN | — | — | — | — | — |
 | **Report Engine** <br/><sub>מנוע דוחות</sub> | 🟡 PARTIAL | 🟡 | 🟡 | 🟡 | n/a | matriya-back, maneger-back |
@@ -54,13 +59,43 @@ Kernel v1.6 breakdown detection, integrity monitor + rules engine, decision/rese
   - Admin/observability endpoints exist but UI coverage is partial.
 
 ### 🟢 Knowledge Events — אירועי ידע
-Append-only ledger of knowledge movements; Knowledge Growth is computed from it (the bank-statement model). Schema + ledger + live feed work in the control plane.
-- **Depends on:** knowledge-engine
+Append-only ledger of knowledge movements — the foundational substrate the whole learning pipeline stands on. Knowledge Growth is computed from it (the bank-statement model). Schema + ledger + live feed work in the control plane.
 - **Open items:**
   - Emit points WIRED in code: document.ingested/removed (matriya-back + maneger-back), question.opened + intent.declared (maneger-back). Activate by setting KNOWLEDGE_LEDGER_URL in both backends.
   - evidence.attached emit point still to wire (matriya-back decision-audit flow).
   - Ledger shows seeded sample data until the backends are activated.
   - JSONL store is a POC — promote to a DB table for production.
+
+### 🔵 Change Detector — גלאי שינוי
+Senses + first nervous system: notice that something in reality differs from before, and filter signal from noise before it reaches the ledger. Today backends emit directly; this layer would qualify 'is this even a change?'.
+- **Depends on:** knowledge-events
+- **Open items:**
+  - Design only — emit points currently bypass any change-detection.
+
+### 🔵 Evidence Qualification — מיון ראיות
+Immune system: is a change real, an error, or impossible? Qualify evidence before it is allowed to become accepted knowledge.
+- **Depends on:** change-detector
+- **Open items:**
+  - Design only — no qualification gate exists between an event and the ledger.
+
+### 🔵 Human Review — אישור אנושי
+Cortex acceptance: a human accepts or rejects qualified evidence before it enters long-term memory and is allowed to change the model.
+- **Depends on:** evidence-qualification
+- **Open items:**
+  - Design only — the 'accepted' funnel stage has no source yet.
+
+### 🔵 Episodic Linking — קישור אפיזודי (היפוקמפוס)
+The hippocampus: connect events across time into chains/stories so patterns can emerge (material swap → cracks → supplier change → resolved). Asserts a link only after the whole chain exists — not before.
+- **Depends on:** knowledge-events
+- **Open items:**
+  - Design only — the ledger records movements but does not yet link them into episodes.
+  - This is the organ that turns history into patterns.
+
+### 🔵 Learning Model — מודל למידה
+Produces learning, not knowledge — the model that changes as accepted evidence and linked episodes accumulate. 'Knowledge is a picture; learning is a movie.' This is the real subject of the Control Room's 'how does the lab learn?' question.
+- **Depends on:** human-review, episodic-linking
+- **Open items:**
+  - Design only — replaces 'how much knowledge?' with 'what changed the model, and why?'.
 
 ### ⚪ Evolution Engine — מנוע התפתחות
 Asserted to exist as a prototype, but the codebase scan did not locate an implementation.
@@ -69,8 +104,8 @@ Asserted to exist as a prototype, but the codebase scan did not locate an implem
   - ACTION: link the prototype source, or downgrade to 'design'. This is exactly the kind of ambiguity the registry exists to surface.
 
 ### 🔵 Decision Engine — מנוע החלטות
-Turn knowledge + evidence into recommended engineering decisions. Design stage only.
-- **Depends on:** knowledge-engine, knowledge-events
+Turn learning into recommended engineering decisions (and, ultimately, laws). Design stage only — the last stage of the pipeline, not the first.
+- **Depends on:** learning-model
 - **Open items:**
   - No implementation located — design only.
 
@@ -111,7 +146,7 @@ matriya-back value-summary endpoints + maneger TXT project export. Not unified i
 
 ## Roll-up
 
-✅ READY: **5** · 🟡 PARTIAL: **2** · 🟢 POC: **1** · ⚪ UNKNOWN: **1** · 🔵 DESIGN: **1**
+✅ READY: **5** · 🟡 PARTIAL: **2** · 🟢 POC: **1** · 🔵 DESIGN: **6** · ⚪ UNKNOWN: **1**
 
 ---
-_Rendered from capabilities.json. 10 capabilities, 6 connections, 5 repositories._
+_Rendered from capabilities.json. 15 capabilities, 6 connections, 5 repositories._
