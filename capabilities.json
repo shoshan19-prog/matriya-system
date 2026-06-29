@@ -72,7 +72,8 @@
     { "id": "supabase", "name": "Supabase (Postgres)", "status": "ready",   "instances": ["matriya DB (rag_documents, users, sessions, audit)", "maneger DB (projects, lab, management_vector)"], "usedBy": ["matriya-back", "maneger-back"], "notes": "Two separate instances by design — no shared DB; products integrate via API only." },
     { "id": "openai",   "name": "OpenAI",              "status": "ready",   "usedBy": ["matriya-back", "maneger-back"], "notes": "file_search + embeddings (maneger: text-embedding-ada-002). matriya-back also supports Together AI / HuggingFace." },
     { "id": "msgraph",  "name": "Microsoft Graph (SharePoint)", "status": "partial", "usedBy": ["maneger-back"], "notes": "Code wired; needs Azure app registration (SHAREPOINT_*). Returns 400 if unconfigured.", "remedy": "Register an Azure AD app and set SHAREPOINT_TENANT_ID / CLIENT_ID / CLIENT_SECRET." },
-    { "id": "resend",   "name": "Email (Resend)",      "status": "partial", "usedBy": ["maneger-back"], "notes": "Inbound+outbound mail. NOTE: the product brief calls this 'Gmail' — actual implementation is Resend. Reconcile naming.", "remedy": "Decide product naming (Gmail vs Resend); set RESEND_API_KEY + verified domain." }
+    { "id": "resend",   "name": "Email (Resend)",      "status": "partial", "usedBy": ["maneger-back"], "notes": "Inbound+outbound mail. NOTE: the product brief calls this 'Gmail' — actual implementation is Resend. Reconcile naming.", "remedy": "Decide product naming (Gmail vs Resend); set RESEND_API_KEY + verified domain." },
+    { "id": "ledger-emit", "name": "Knowledge Ledger emit", "status": "partial", "usedBy": ["matriya-back", "maneger-back"], "notes": "Backends emit knowledge movements into the control-plane ledger (fire-and-forget, no-op unless configured). Code wired; not yet activated in deployments.", "remedy": "Set KNOWLEDGE_LEDGER_URL in matriya-back and maneger-back to the control-plane URL." }
   ],
 
   "capabilities": [
@@ -151,7 +152,7 @@
       "layers": { "backend": "yes", "frontend": "partial", "api": "yes", "db": "partial" },
       "repos": ["matriya-system"],
       "dependencies": ["knowledge-engine"],
-      "openItems": ["Emit points not wired: matriya-back / maneger-back must POST events at ingest, evidence-attach, intent and question moments (see docs/KNOWLEDGE-EVENTS.md).", "Ledger runs on seeded sample events until then.", "JSONL store is a POC — promote to a DB table for production."]
+      "openItems": ["Emit points WIRED in code: document.ingested/removed (matriya-back + maneger-back), question.opened + intent.declared (maneger-back). Activate by setting KNOWLEDGE_LEDGER_URL in both backends.", "evidence.attached emit point still to wire (matriya-back decision-audit flow).", "Ledger shows seeded sample data until the backends are activated.", "JSONL store is a POC — promote to a DB table for production."]
     },
     {
       "id": "evolution-engine",

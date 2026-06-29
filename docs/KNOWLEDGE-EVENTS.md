@@ -65,10 +65,24 @@ See `lib/knowledgeLedger.js` for the implementation and `GET /api/knowledge` for
 
 This substrate is a **POC inside the control plane**: the ledger, the schema, the balance
 derivation and the live feed all work, and the Control Tower's Knowledge-Growth panel reads
-from them. What's **not** done yet — and the honest next step — is wiring the **emit points**:
-matriya-back and maneger-back must POST events into the ledger at the moments in the table
-above. Until then the ledger runs on **seeded sample events** (`source: "seed"`), clearly
-marked, so the mechanism is visibly alive without pretending the real backends are feeding it.
+from them.
+
+**Emit points are now wired in the product backends** (fire-and-forget, no-op unless
+`KNOWLEDGE_LEDGER_URL` is set, never blocks or fails a request):
+
+| event | wired in | where |
+|---|---|---|
+| `document.ingested` | matriya-back | `POST /ingest/file` success |
+| `document.removed`  | matriya-back | `DELETE /documents` success |
+| `document.ingested` | maneger-back | `POST /api/projects/:id/files` success |
+| `document.removed`  | maneger-back | `DELETE /api/projects/:id/files/:fileId` success |
+| `question.opened`   | maneger-back | `POST /api/projects/:id/research-sessions` success |
+| `intent.declared`   | maneger-back | `POST /api/projects/:id/experiments/from-formulation` success |
+| `evidence.attached` | — | **still to wire** (matriya-back decision-audit flow) |
+
+**To activate:** set `KNOWLEDGE_LEDGER_URL` (the control-plane base URL) in matriya-back and
+maneger-back. Until activated, the ledger shows **seeded sample events** (`source: "seed"`),
+clearly marked, so the mechanism is visibly alive without pretending the backends are feeding it.
 
 ```
 POST /api/knowledge/events     # append a real event (this is the emit endpoint backends call)

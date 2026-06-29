@@ -57,8 +57,9 @@ Kernel v1.6 breakdown detection, integrity monitor + rules engine, decision/rese
 Append-only ledger of knowledge movements; Knowledge Growth is computed from it (the bank-statement model). Schema + ledger + live feed work in the control plane.
 - **Depends on:** knowledge-engine
 - **Open items:**
-  - Emit points not wired: matriya-back / maneger-back must POST events at ingest, evidence-attach, intent and question moments (see docs/KNOWLEDGE-EVENTS.md).
-  - Ledger runs on seeded sample events until then.
+  - Emit points WIRED in code: document.ingested/removed (matriya-back + maneger-back), question.opened + intent.declared (maneger-back). Activate by setting KNOWLEDGE_LEDGER_URL in both backends.
+  - evidence.attached emit point still to wire (matriya-back decision-audit flow).
+  - Ledger shows seeded sample data until the backends are activated.
   - JSONL store is a POC — promote to a DB table for production.
 
 ### ⚪ Evolution Engine — מנוע התפתחות
@@ -88,6 +89,7 @@ matriya-back value-summary endpoints + maneger TXT project export. Not unified i
 | **OpenAI** | ✅ ready | matriya-back, maneger-back | file_search + embeddings (maneger: text-embedding-ada-002). matriya-back also supports Together AI / HuggingFace. |
 | **Microsoft Graph (SharePoint)** | 🟡 partial | maneger-back | Code wired; needs Azure app registration (SHAREPOINT_*). Returns 400 if unconfigured. |
 | **Email (Resend)** | 🟡 partial | maneger-back | Inbound+outbound mail. NOTE: the product brief calls this 'Gmail' — actual implementation is Resend. Reconcile naming. |
+| **Knowledge Ledger emit** | 🟡 partial | matriya-back, maneger-back | Backends emit knowledge movements into the control-plane ledger (fire-and-forget, no-op unless configured). Code wired; not yet activated in deployments. |
 
 ## Repositories
 
@@ -112,4 +114,4 @@ matriya-back value-summary endpoints + maneger TXT project export. Not unified i
 ✅ READY: **5** · 🟡 PARTIAL: **2** · 🟢 POC: **1** · ⚪ UNKNOWN: **1** · 🔵 DESIGN: **1**
 
 ---
-_Rendered from capabilities.json. 10 capabilities, 5 connections, 5 repositories._
+_Rendered from capabilities.json. 10 capabilities, 6 connections, 5 repositories._
