@@ -1,0 +1,14 @@
+{"id":"ke_000001","ts":"2026-06-22T09:00:00.000Z","type":"document.ingested","category":"documents","delta":1,"subject":"spec_v1.pdf","source":"seed"}
+{"id":"ke_000002","ts":"2026-06-22T09:05:00.000Z","type":"document.ingested","category":"documents","delta":1,"subject":"lab_results.xlsx","source":"seed"}
+{"id":"ke_000003","ts":"2026-06-22T10:00:00.000Z","type":"evidence.attached","category":"evidence","delta":1,"subject":"chunk#12 → claim A","source":"seed"}
+{"id":"ke_000004","ts":"2026-06-23T11:00:00.000Z","type":"document.ingested","category":"documents","delta":1,"subject":"formulation_A.docx","source":"seed"}
+{"id":"ke_000005","ts":"2026-06-23T11:30:00.000Z","type":"question.opened","category":"questions","delta":1,"subject":"why does batch 7 fail?","source":"seed"}
+{"id":"ke_000006","ts":"2026-06-23T14:00:00.000Z","type":"evidence.attached","category":"evidence","delta":1,"subject":"MSDS → toxicity claim","source":"seed"}
+{"id":"ke_000007","ts":"2026-06-24T09:00:00.000Z","type":"intent.declared","category":"intents","delta":1,"subject":"increase yield 5%","source":"seed"}
+{"id":"ke_000008","ts":"2026-06-24T16:00:00.000Z","type":"document.ingested","category":"documents","delta":1,"subject":"sharepoint/policy.pdf","source":"seed"}
+{"id":"ke_000009","ts":"2026-06-25T10:00:00.000Z","type":"question.opened","category":"questions","delta":1,"subject":"contradiction in pH readings?","source":"seed"}
+{"id":"ke_000010","ts":"2026-06-25T15:00:00.000Z","type":"evidence.attached","category":"evidence","delta":1,"subject":"replicate confirms claim A","source":"seed"}
+{"id":"ke_000011","ts":"2026-06-26T09:00:00.000Z","type":"question.resolved","category":"questions","delta":-1,"subject":"batch 7 fail → moisture","source":"seed"}
+{"id":"ke_000012","ts":"2026-06-26T12:00:00.000Z","type":"intent.declared","category":"intents","delta":1,"subject":"reduce cost of material X","source":"seed"}
+{"id":"ke_000013","ts":"2026-06-27T09:00:00.000Z","type":"document.removed","category":"documents","delta":-1,"subject":"obsolete_draft.pdf","source":"seed"}
+{"id":"ke_000014","ts":"2026-06-27T10:00:00.000Z","type":"document.ingested","category":"documents","delta":1,"subject":"final_report.pdf","source":"seed"}

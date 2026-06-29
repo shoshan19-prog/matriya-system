@@ -5,8 +5,10 @@ const express = require('express');
 const { readFile } = require('node:fs/promises');
 const { join } = require('node:path');
 const { diagnose } = require('./lib/diagnose');
+const ledger = require('./lib/knowledgeLedger');
 
 const app = express();
+app.use(express.json());
 const PORT = process.env.PORT || 3000;
 const REGISTRY = join(__dirname, 'capabilities.json');
 const loadRegistry = async () => JSON.parse(await readFile(REGISTRY, 'utf8'));
@@ -26,6 +28,26 @@ app.get('/api/diagnosis', async (_req, res) => {
     res.json(diagnose(await loadRegistry()));
   } catch (err) {
     res.status(500).json({ error: 'Diagnosis failed', detail: String(err) });
+  }
+});
+
+// Knowledge feed — the balance (Growth) and statement (Timeline), computed live
+// from the ledger. This is what lights up the tower's Knowledge-Growth panel.
+app.get('/api/knowledge', (_req, res) => {
+  try {
+    const events = ledger.readAll();
+    res.json({ balance: ledger.balance(events), timeline: ledger.timeline(8, events), meta: ledger.meta(events) });
+  } catch (err) {
+    res.status(500).json({ error: 'Cannot read ledger', detail: String(err) });
+  }
+});
+
+// Emit point — backends POST real movements here.
+app.post('/api/knowledge/events', (req, res) => {
+  try {
+    res.status(201).json(ledger.append(req.body || {}));
+  } catch (err) {
+    res.status(400).json({ error: String(err.message || err) });
   }
 });
 

@@ -47,6 +47,17 @@
   .kg .val.pending{color:var(--dim);font-weight:500}
   .kg .lbl{color:var(--dim);font-size:12px;margin-top:2px}
   .kg .src{color:#5b6577;font-size:10px;margin-top:6px}
+  .ledger{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .ledger .lh{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin-bottom:8px}
+  .seedtag{background:#2a2410;color:var(--partial);border-radius:5px;padding:1px 6px;font-size:10px;letter-spacing:0;text-transform:none}
+  .mv{display:grid;grid-template-columns:38px 150px 1fr auto;gap:10px;align-items:center;padding:4px 0;font-size:12px;border-top:1px solid #161d2b}
+  .mv:first-of-type{border-top:none}
+  .mv .d{font-weight:700;text-align:center;border-radius:5px;padding:1px 0}
+  .mv .d.p{color:var(--ready);background:#10241a}
+  .mv .d.n{color:var(--miss);background:#251313}
+  .mv .ty{color:var(--accent)}
+  .mv .su{color:var(--txt)}
+  .mv .me{color:var(--dim);font-size:11px}
   .health{display:flex;align-items:center;gap:10px}
   .dot{width:9px;height:9px;border-radius:50%;flex:none}
   .repos{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
@@ -139,18 +150,32 @@ function render(d){
   }
   h += `</div></section>`;
 
-  // Knowledge Growth
+  // Knowledge Growth — values injected live from the ledger (window.__KG)
   if(d.knowledgeGrowth){
+    const live = window.__KG || null;
     h += `<section><h2>Knowledge Growth</h2><div class="row kgs">`;
     for(const m of d.knowledgeGrowth.metrics){
-      const val = m.wired && m.value!=null ? esc(m.value) : '—';
+      const v = live && live.balance && (m.id in live.balance) ? live.balance[m.id] : null;
+      const val = v!=null ? esc(v) : '—';
       h += `<div class="kg">
-        <div class="val ${m.wired?'':'pending'}">${val}</div>
+        <div class="val ${v!=null?'':'pending'}">${val}</div>
         <div class="lbl">${esc(m.label)}</div>
-        <div class="src">${m.wired?'live':'pending: '+esc(m.source)}</div>
+        <div class="src">${esc(m.source)}</div>
       </div>`;
     }
-    h += `</div><p class="note">${esc(d.knowledgeGrowth.note)}</p></section>`;
+    h += `</div>`;
+    if(live && live.timeline && live.timeline.length){
+      h += `<div class="ledger"><div class="lh">Ledger · recent movements${live.meta&&live.meta.seeded?' <span class="seedtag">seeded sample</span>':''}</div>`;
+      for(const e of live.timeline){
+        const pos = e.delta>0;
+        h += `<div class="mv"><span class="d ${pos?'p':'n'}">${pos?'+':''}${e.delta}</span>
+          <span class="ty">${esc(e.type)}</span>
+          <span class="su">${esc(e.subject)}</span>
+          <span class="me">${esc(e.ts.slice(0,10))} · ${esc(e.source)}</span></div>`;
+      }
+      h += `</div>`;
+    }
+    h += `<p class="note">${esc(d.knowledgeGrowth.note)}</p></section>`;
   }
 
   // System Health
@@ -223,8 +248,9 @@ function renderDiagnosis(d){
 Promise.all([
   fetch('/api/capabilities').then(r => r.ok ? r.json() : Promise.reject(r.status)),
   fetch('/api/diagnosis').then(r => r.ok ? r.json() : null).catch(() => null),
+  fetch('/api/knowledge').then(r => r.ok ? r.json() : null).catch(() => null),
 ])
-  .then(([reg, dx]) => { render(reg); if(dx) renderDiagnosis(dx); })
+  .then(([reg, dx, kg]) => { window.__KG = kg; render(reg); if(dx) renderDiagnosis(dx); })
   .catch(e => { document.getElementById('boot').textContent = 'Failed to load registry: ' + e; });
 </script>
 </body>

@@ -15,7 +15,7 @@ Single Source of Truth for the maturity, wiring and health of every platform cap
 | **Document Intake** <br/><sub>קליטת מסמכים</sub> | ✅ READY | ✅ | ✅ | ✅ | ✅ | matriya-back, maneger-back, matriya-front, maneger-front |
 | **RAG** <br/><sub>אחזור מבוסס מסמכים</sub> | ✅ READY | ✅ | ✅ | ✅ | ✅ | matriya-back, maneger-back, matriya-front, maneger-front |
 | **Knowledge Engine** <br/><sub>מנוע ידע</sub> | 🟡 PARTIAL | ✅ | 🟡 | ✅ | ✅ | matriya-back, matriya-front |
-| **Knowledge Events** <br/><sub>אירועי ידע</sub> | 🔵 DESIGN | — | — | — | — | — |
+| **Knowledge Events** <br/><sub>אירועי ידע</sub> | 🟢 POC | ✅ | 🟡 | ✅ | 🟡 | matriya-system |
 | **Evolution Engine** <br/><sub>מנוע התפתחות</sub> | ⚪ UNKNOWN | — | — | — | — | — |
 | **Decision Engine** <br/><sub>מנוע החלטות</sub> | 🔵 DESIGN | — | — | — | — | — |
 | **Report Engine** <br/><sub>מנוע דוחות</sub> | 🟡 PARTIAL | 🟡 | 🟡 | 🟡 | n/a | matriya-back, maneger-back |
@@ -53,11 +53,13 @@ Kernel v1.6 breakdown detection, integrity monitor + rules engine, decision/rese
   - No first-class 'Knowledge Event' entity yet — knowledge state is implied by audit/decision logs.
   - Admin/observability endpoints exist but UI coverage is partial.
 
-### 🔵 Knowledge Events — אירועי ידע
-First-class record of every knowledge change (new evidence, contradiction, intent, open question). Today these are scattered across audit logs.
+### 🟢 Knowledge Events — אירועי ידע
+Append-only ledger of knowledge movements; Knowledge Growth is computed from it (the bank-statement model). Schema + ledger + live feed work in the control plane.
 - **Depends on:** knowledge-engine
 - **Open items:**
-  - Define the event schema and emit points; this is the substrate the Control Tower's 'Knowledge Growth' panel needs.
+  - Emit points not wired: matriya-back / maneger-back must POST events at ingest, evidence-attach, intent and question moments (see docs/KNOWLEDGE-EVENTS.md).
+  - Ledger runs on seeded sample events until then.
+  - JSONL store is a POC — promote to a DB table for production.
 
 ### ⚪ Evolution Engine — מנוע התפתחות
 Asserted to exist as a prototype, but the codebase scan did not locate an implementation.
@@ -107,7 +109,7 @@ matriya-back value-summary endpoints + maneger TXT project export. Not unified i
 
 ## Roll-up
 
-✅ READY: **5** · 🟡 PARTIAL: **2** · 🔵 DESIGN: **2** · ⚪ UNKNOWN: **1**
+✅ READY: **5** · 🟡 PARTIAL: **2** · 🟢 POC: **1** · ⚪ UNKNOWN: **1** · 🔵 DESIGN: **1**
 
 ---
 _Rendered from capabilities.json. 10 capabilities, 5 connections, 5 repositories._

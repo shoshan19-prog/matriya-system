@@ -146,12 +146,12 @@
       "id": "knowledge-events",
       "name": "Knowledge Events",
       "hebrew": "אירועי ידע",
-      "status": "design",
-      "summary": "First-class record of every knowledge change (new evidence, contradiction, intent, open question). Today these are scattered across audit logs.",
-      "layers": { "backend": "no", "frontend": "no", "api": "no", "db": "no" },
-      "repos": [],
+      "status": "poc",
+      "summary": "Append-only ledger of knowledge movements; Knowledge Growth is computed from it (the bank-statement model). Schema + ledger + live feed work in the control plane.",
+      "layers": { "backend": "yes", "frontend": "partial", "api": "yes", "db": "partial" },
+      "repos": ["matriya-system"],
       "dependencies": ["knowledge-engine"],
-      "openItems": ["Define the event schema and emit points; this is the substrate the Control Tower's 'Knowledge Growth' panel needs."]
+      "openItems": ["Emit points not wired: matriya-back / maneger-back must POST events at ingest, evidence-attach, intent and question moments (see docs/KNOWLEDGE-EVENTS.md).", "Ledger runs on seeded sample events until then.", "JSONL store is a POC — promote to a DB table for production."]
     },
     {
       "id": "evolution-engine",
@@ -189,13 +189,14 @@
   ],
 
   "knowledgeGrowth": {
-    "note": "These are the platform's growth metrics. They are NOT yet wired to live data sources — the 'Knowledge Events' capability (design stage) is the substrate that will feed them. Until then they read as pending.",
+    "note": "Computed live from the Knowledge Ledger (GET /api/knowledge) — the balance is a reduce over the event movements, never a stored datum. Values currently reflect SEEDED sample events until the product backends wire their emit points.",
+    "source": "knowledge-ledger",
     "metrics": [
-      { "id": "documents",   "label": "Documents",          "value": null, "source": "matriya-back rag_documents / maneger management_vector", "wired": false, "blockedBy": "instrumentation" },
-      { "id": "evidence",    "label": "Evidence",           "value": null, "source": "matriya-back decision_audit_log attributions",      "wired": false, "blockedBy": "instrumentation" },
-      { "id": "events",      "label": "Knowledge Events",   "value": null, "source": "knowledge-events (design)",                          "wired": false, "blockedBy": "knowledge-events" },
-      { "id": "intents",     "label": "Engineering Intents","value": null, "source": "knowledge-events (design)",                          "wired": false, "blockedBy": "knowledge-events" },
-      { "id": "questions",   "label": "Open Questions",     "value": null, "source": "knowledge-events (design)",                          "wired": false, "blockedBy": "knowledge-events" }
+      { "id": "documents",   "label": "Documents",          "wired": true, "source": "ledger: document.* movements" },
+      { "id": "evidence",    "label": "Evidence",           "wired": true, "source": "ledger: evidence.attached" },
+      { "id": "events",      "label": "Knowledge Events",   "wired": true, "source": "ledger: total movements" },
+      { "id": "intents",     "label": "Engineering Intents","wired": true, "source": "ledger: intent.* movements" },
+      { "id": "questions",   "label": "Open Questions",     "wired": true, "source": "ledger: opened − resolved" }
     ]
   },
 
