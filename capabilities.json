@@ -71,8 +71,8 @@
     { "id": "jwt",      "name": "JWT auth",            "status": "ready",   "issuer": "matriya-back", "usedBy": ["matriya-back", "matriya-front", "maneger-back", "maneger-front"], "notes": "maneger-back proxies auth to matriya-back; same token bridges the two products." },
     { "id": "supabase", "name": "Supabase (Postgres)", "status": "ready",   "instances": ["matriya DB (rag_documents, users, sessions, audit)", "maneger DB (projects, lab, management_vector)"], "usedBy": ["matriya-back", "maneger-back"], "notes": "Two separate instances by design — no shared DB; products integrate via API only." },
     { "id": "openai",   "name": "OpenAI",              "status": "ready",   "usedBy": ["matriya-back", "maneger-back"], "notes": "file_search + embeddings (maneger: text-embedding-ada-002). matriya-back also supports Together AI / HuggingFace." },
-    { "id": "msgraph",  "name": "Microsoft Graph (SharePoint)", "status": "partial", "usedBy": ["maneger-back"], "notes": "Code wired; needs Azure app registration (SHAREPOINT_*). Returns 400 if unconfigured." },
-    { "id": "resend",   "name": "Email (Resend)",      "status": "partial", "usedBy": ["maneger-back"], "notes": "Inbound+outbound mail. NOTE: the product brief calls this 'Gmail' — actual implementation is Resend. Reconcile naming." }
+    { "id": "msgraph",  "name": "Microsoft Graph (SharePoint)", "status": "partial", "usedBy": ["maneger-back"], "notes": "Code wired; needs Azure app registration (SHAREPOINT_*). Returns 400 if unconfigured.", "remedy": "Register an Azure AD app and set SHAREPOINT_TENANT_ID / CLIENT_ID / CLIENT_SECRET." },
+    { "id": "resend",   "name": "Email (Resend)",      "status": "partial", "usedBy": ["maneger-back"], "notes": "Inbound+outbound mail. NOTE: the product brief calls this 'Gmail' — actual implementation is Resend. Reconcile naming.", "remedy": "Decide product naming (Gmail vs Resend); set RESEND_API_KEY + verified domain." }
   ],
 
   "capabilities": [
@@ -191,17 +191,17 @@
   "knowledgeGrowth": {
     "note": "These are the platform's growth metrics. They are NOT yet wired to live data sources — the 'Knowledge Events' capability (design stage) is the substrate that will feed them. Until then they read as pending.",
     "metrics": [
-      { "id": "documents",   "label": "Documents",          "value": null, "source": "matriya-back rag_documents / maneger management_vector", "wired": false },
-      { "id": "evidence",    "label": "Evidence",           "value": null, "source": "matriya-back decision_audit_log attributions",      "wired": false },
-      { "id": "events",      "label": "Knowledge Events",   "value": null, "source": "knowledge-events (design)",                          "wired": false },
-      { "id": "intents",     "label": "Engineering Intents","value": null, "source": "knowledge-events (design)",                          "wired": false },
-      { "id": "questions",   "label": "Open Questions",     "value": null, "source": "knowledge-events (design)",                          "wired": false }
+      { "id": "documents",   "label": "Documents",          "value": null, "source": "matriya-back rag_documents / maneger management_vector", "wired": false, "blockedBy": "instrumentation" },
+      { "id": "evidence",    "label": "Evidence",           "value": null, "source": "matriya-back decision_audit_log attributions",      "wired": false, "blockedBy": "instrumentation" },
+      { "id": "events",      "label": "Knowledge Events",   "value": null, "source": "knowledge-events (design)",                          "wired": false, "blockedBy": "knowledge-events" },
+      { "id": "intents",     "label": "Engineering Intents","value": null, "source": "knowledge-events (design)",                          "wired": false, "blockedBy": "knowledge-events" },
+      { "id": "questions",   "label": "Open Questions",     "value": null, "source": "knowledge-events (design)",                          "wired": false, "blockedBy": "knowledge-events" }
     ]
   },
 
   "systemHealth": [
-    { "id": "restore", "name": "DB restore verified", "status": "warning", "notes": "maneger-back RESTORE-TEST-DONE.md is empty — restore drill not yet performed." },
-    { "id": "ci",      "name": "CI / automated tests on push", "status": "missing", "notes": "No GitHub Actions in any repo, despite rich test suites in both backends." },
-    { "id": "env",     "name": "Production env vars pinned", "status": "warning", "notes": "Frontends fall back to hardcoded URLs; cross-product URLs (Management Lab) unset." }
+    { "id": "restore", "name": "DB restore verified", "status": "warning", "notes": "maneger-back RESTORE-TEST-DONE.md is empty — restore drill not yet performed.", "remedy": "Run the 4-step restore drill in INFRASTRUCTURE.md and record the result." },
+    { "id": "ci",      "name": "CI / automated tests on push", "status": "missing", "notes": "No GitHub Actions in any repo, despite rich test suites in both backends.", "remedy": "Add a GitHub Action running the existing npm test suites on push." },
+    { "id": "env",     "name": "Production env vars pinned", "status": "warning", "notes": "Frontends fall back to hardcoded URLs; cross-product URLs (Management Lab) unset.", "remedy": "Pin REACT_APP_* / VITE_* in Vercel and redeploy; set Management Lab URLs." }
   ]
 }

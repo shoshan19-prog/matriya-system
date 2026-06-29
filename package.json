@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "render": "node scripts/render-capabilities.mjs"
+    "render": "node scripts/render-capabilities.mjs",
+    "diagnose": "node scripts/diagnose.js"
   },
   "repository": {
     "type": "git",
