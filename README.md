@@ -31,7 +31,13 @@ npm install
 npm start        # Control Tower at http://localhost:3000
 npm run render   # regenerate CAPABILITIES.md after editing capabilities.json
 npm run diagnose # print the "why" — cause chains to root, for terminal/CI
+npm run brief    # MATRIYA Daily Brief — COO morning report (verified-only, UNKNOWN otherwise)
 ```
+
+The **Daily Brief** (`npm run brief`, or `GET /api/brief`) is a 3–5 minute morning read:
+system health, what changed, knowledge growth, the single bottleneck, and the one mission
+with the biggest leverage today. It reports verified reality only — anything it cannot
+verify is printed `UNKNOWN`, never guessed. It gets rich the moment the ledger goes live.
 
 Read **[CAPABILITIES.md](./CAPABILITIES.md)** first — it's the 30-second map of the whole platform.
 

@@ -51,6 +51,20 @@ app.post('/api/knowledge/events', (req, res) => {
   }
 });
 
+// Daily Brief feed — the COO morning report as JSON-wrapped markdown.
+app.get('/api/brief', async (_req, res) => {
+  try {
+    const { execFileSync } = require('node:child_process');
+    const date = typeof _req.query.date === 'string' ? _req.query.date : '';
+    const args = [join(__dirname, 'scripts', 'daily-brief.js')];
+    if (date) args.push(date);
+    const text = execFileSync('node', args, { encoding: 'utf8' });
+    res.type('text/markdown').send(text);
+  } catch (err) {
+    res.status(500).json({ error: 'Brief failed', detail: String(err) });
+  }
+});
+
 app.get('/health', (_req, res) => res.json({ status: 'ok', service: 'matriya-control-tower' }));
 
 app.use(express.static(join(__dirname, 'public')));

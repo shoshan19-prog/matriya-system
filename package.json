@@ -11,7 +11,8 @@
     "start": "node server.js",
     "render": "node scripts/render-capabilities.mjs",
     "diagnose": "node scripts/diagnose.js",
-    "ledger": "node scripts/knowledge.js"
+    "ledger": "node scripts/knowledge.js",
+    "brief": "node scripts/daily-brief.js"
   },
   "repository": {
     "type": "git",
