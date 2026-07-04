@@ -70,6 +70,8 @@ node src/poc/poc01-mechanism.js --experiment <lab_experiments.id>
 
 **לא מתחילים Layer 3 (ingestion ידע עולמי) ולא N-Generator לפני שיש Mechanism Entity אמיתי אחד מקצה לקצה** — כלומר לפני ש-`npm run poc:01` רץ בהצלחה מול נתוני אמת. מתיישב עם Kernel MATRIYA: אין מעבר K→N בלי אימות מציאות.
 
+מאחורי השער ממתינים שני כיוונים אסטרטגיים מתוכננים — Mechanism Evolution (שרשרת גרסאות טענה → Law Candidate) ו-Boundary Library (גבולות מבניים כישות ראשונה, בסיס B→N): ראו [`POST-POC01-STRATEGY.md`](POST-POC01-STRATEGY.md).
+
 ## מה נדרש כדי להריץ חי
 
 1. Supabase project לליבת V5 → להריץ `sql/001_v5_core_mechanisms.sql`
