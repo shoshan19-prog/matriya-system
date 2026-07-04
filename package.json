@@ -1,14 +1,16 @@
 {
   "name": "matriya-system",
   "version": "1.0.0",
-  "description": "Matriya RAG system – backend + frontend",
+  "description": "MATRIYA V5 Core - engine core (mechanisms, claims, evidence)",
   "main": "server.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "node --test",
+    "start": "node server.js",
+    "poc:01": "node src/poc/poc01-mechanism.js",
+    "poc:01:dry": "node src/poc/poc01-mechanism.js --dry-run"
   },
   "repository": {
     "type": "git",

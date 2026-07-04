@@ -1,0 +1,26 @@
+{
+  "_comment": "Dry-run fixture shaped exactly like a lab_experiments row from the management DB. Used only with --dry-run; the real POC reads a live experiment through the read-only bridge.",
+  "experiment": {
+    "id": "00000000-0000-0000-0000-00000000f1x1",
+    "project_id": "00000000-0000-0000-0000-0000000000aa",
+    "experiment_id": "EXP-FIXTURE-001",
+    "experiment_version": 1,
+    "technology_domain": "fireproof_coating",
+    "formula": "APP 25% / Pentaerythritol 8% / Melamine 8% / TiO2 5% / Acrylic binder 54%",
+    "materials": ["ammonium polyphosphate", "pentaerythritol", "melamine", "titanium dioxide", "acrylic binder"],
+    "percentages": { "APP": 25, "PER": 8, "MEL": 8, "TiO2": 5, "binder": 54 },
+    "results": "Intumescent char layer formed, thickness 12mm after burner test; adhesion to steel substrate good; no cracking after cooling.",
+    "experiment_outcome": "success",
+    "is_production_formula": false,
+    "parent_experiment_id": null,
+    "source_file_reference": "fixture://poc01",
+    "created_at": "2026-07-01T00:00:00Z"
+  },
+  "experiment_materials": [
+    { "material_id": "MAT-APP", "role": "main", "percentage": 25 },
+    { "material_id": "MAT-PER", "role": "secondary", "percentage": 8 },
+    { "material_id": "MAT-MEL", "role": "additive", "percentage": 8 },
+    { "material_id": "MAT-TIO2", "role": "additive", "percentage": 5 },
+    { "material_id": "MAT-BINDER", "role": "main", "percentage": 54 }
+  ]
+}
